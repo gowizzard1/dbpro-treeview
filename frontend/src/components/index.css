@@ -79,5 +79,5 @@ input:checked + .slider:before {
     width: 600px;
     height: 500px;
     overflow: auto;
-    border: 1px solid #ccc;
+    border: 1px solid rgb(171, 151, 151);
   }
