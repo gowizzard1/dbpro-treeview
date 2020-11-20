@@ -149,6 +149,7 @@ export class TreeView extends Component {
     sourceNode.drop()
     this.setState({ treeData: this.root.model })
   }
+  
   onGoUp = () => {
     const [selectedKey] = this.tree.state.selectedKeys
     if(!selectedKey) {
@@ -229,7 +230,7 @@ export class TreeView extends Component {
         <TreeStyled
           showLine={this.state.showLine}
           checkable={this.state.showCheckbox}
-          selectable={ true }
+          selectable={ false }
           draggable={this.state.isDraggable}
           // defaultExpandAll
           defaultExpandedKeys={[testData.name]}
