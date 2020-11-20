@@ -65,6 +65,11 @@ export class TreeView extends Component {
 
   handleMultiSelect(e) {
     const checked = e.target.checked;
+    if(checked){
+      this.setState({
+        selectable: checked
+      })
+    }
     this.setState({
       isMultiSelect:checked
     });
