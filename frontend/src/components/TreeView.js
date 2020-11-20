@@ -11,6 +11,7 @@ import ReactDOM from 'react-dom';
 import TreeModel from 'tree-model'
 import { uniqueId, last, defaultTo } from 'lodash'
 import '../styles/basic.less';
+import {Row} from 'reactstrap'
 
 export class TreeView extends Component {
   static propTypes = {
@@ -195,7 +196,7 @@ export class TreeView extends Component {
     return (
       <div style={{ margin: '0 20px' }}>
       <h2>DBPRO</h2>
-      <div>
+      <Row>
       <b>Show lines</b>
         &nbsp;&nbsp;
         <label className="switch"> 
@@ -216,15 +217,7 @@ export class TreeView extends Component {
         <input type="checkbox" checked={this.state.isDraggable} onChange={this.handleDrag}/> 
         <span className="slider "></span>
       </label>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <button onClick={this.onAdd}>Add</button>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <button onClick={this.onRemove}>Remove</button>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <button onClick={this.onGoUp}>Up</button>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <button onClick={this.onGoDown}>Down</button>
-
+   
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <b>Selectable</b>
          &nbsp;&nbsp;
@@ -232,7 +225,26 @@ export class TreeView extends Component {
           <input type="checkbox" checked={this.state.selectable} onChange={this.handleSelectable} /> 
           <span className="slider round "></span>
         </label>
-      </div>
+        
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <b>MultiSelect</b>
+         &nbsp;&nbsp;
+        <label className="switch">
+          <input type="checkbox" checked={this.state.isMultiSelect} onChange={this.handleMultiSelect} /> 
+          <span className="slider round "></span>
+        </label>
+      </Row>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+      <Row>
+        <button onClick={this.onAdd}>Add</button>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <button onClick={this.onRemove}>Remove</button>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <button onClick={this.onGoUp}>Up</button>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <button onClick={this.onGoDown}>Down</button>
+        </Row>
       <div className="draggable-container">
         <TreeStyled
           showLine={this.state.showLine}
@@ -246,7 +258,7 @@ export class TreeView extends Component {
           defaultCheckedKeys={this.state.defaultCheckedKeys}
           onSelect={this.onSelect}
           onCheck={this.onCheck}
-          multiple={this.isMultiSelect}
+          multiple={this.state.isMultiSelect}
           treeData={[this.state.treeData]}
           onDoubleClick={this.onDoubleClick}
           ref={this.setTreeRef}
