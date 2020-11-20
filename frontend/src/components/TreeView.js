@@ -39,6 +39,7 @@ export class TreeView extends Component {
     this.handleCheckboxShow = this.handleCheckboxShow.bind(this);
     this.handleDrag = this.handleDrag.bind(this);
     this.handleMultiSelect = this.handleMultiSelect.bind(this);
+    this.handleSelectable = this.handleSelectable.bind(this);
 
     this.state = {
       defaultExpandedKeys: keys,
@@ -50,6 +51,7 @@ export class TreeView extends Component {
       isDraggable: false,
       showCheckbox: true,
       isMultiSelect : false,
+      selectable: true,
     };
   }
 
@@ -66,7 +68,12 @@ export class TreeView extends Component {
       isMultiSelect:checked
     });
   }
-
+  handleSelectable(e) {
+    const checked = e.target.checked;
+    this.setState({
+      selectable:checked
+    });
+  }
   handleCheckboxShow(e) {
     const checked = e.target.checked;
     this.setState({
@@ -149,7 +156,7 @@ export class TreeView extends Component {
     sourceNode.drop()
     this.setState({ treeData: this.root.model })
   }
-  
+
   onGoUp = () => {
     const [selectedKey] = this.tree.state.selectedKeys
     if(!selectedKey) {
@@ -219,10 +226,10 @@ export class TreeView extends Component {
         <button onClick={this.onGoDown}>Down</button>
 
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <b>Multi-Select</b>
+        <b>Selectable</b>
          &nbsp;&nbsp;
         <label className="switch">
-          <input type="checkbox" checked={this.state.isMultiSelect} onChange={this.handleMultiSelect} /> 
+          <input type="checkbox" checked={this.state.selectable} onChange={this.handleSelectable} /> 
           <span className="slider round "></span>
         </label>
       </div>
@@ -230,9 +237,8 @@ export class TreeView extends Component {
         <TreeStyled
           showLine={this.state.showLine}
           checkable={this.state.showCheckbox}
-          selectable={ false }
+          selectable={ this.state.selectable }
           draggable={this.state.isDraggable}
-          // defaultExpandAll
           defaultExpandedKeys={[testData.name]}
           onExpand={this.onExpand}
           onDrop={this.onDrop}

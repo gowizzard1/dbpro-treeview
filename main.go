@@ -13,12 +13,13 @@ func main() {
 	css := mewn.String("./frontend/build/static/css/main.css")
 
 	app := wails.CreateApp(&wails.AppConfig{
-		Width:  800,
-		Height: 400,
-		Title:  "Commitment",
-		JS:     js,
-		CSS:    css,
-		Colour: "#131313",
+		Width:     800,
+		Height:    400,
+		Title:     "Commitment",
+		JS:        js,
+		CSS:       css,
+		Colour:    "#131313",
+		Resizable: true,
 	})
 
 	// app.Bind(checkForPathList)
