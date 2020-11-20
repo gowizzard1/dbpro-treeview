@@ -11,6 +11,7 @@ import ReactDOM from 'react-dom';
 import TreeModel from 'tree-model'
 import { uniqueId, last, defaultTo } from 'lodash'
 import '../styles/basic.less';
+import {Row} from 'reactstrap'
 
 export class TreeView extends Component {
   static propTypes = {
@@ -39,6 +40,7 @@ export class TreeView extends Component {
     this.handleCheckboxShow = this.handleCheckboxShow.bind(this);
     this.handleDrag = this.handleDrag.bind(this);
     this.handleMultiSelect = this.handleMultiSelect.bind(this);
+    this.handleSelectable = this.handleSelectable.bind(this);
 
     this.state = {
       defaultExpandedKeys: keys,
@@ -50,6 +52,7 @@ export class TreeView extends Component {
       isDraggable: false,
       showCheckbox: true,
       isMultiSelect : false,
+      selectable: true,
     };
   }
 
@@ -62,11 +65,21 @@ export class TreeView extends Component {
 
   handleMultiSelect(e) {
     const checked = e.target.checked;
+    if(checked){
+      this.setState({
+        selectable: checked
+      })
+    }
     this.setState({
       isMultiSelect:checked
     });
   }
-
+  handleSelectable(e) {
+    const checked = e.target.checked;
+    this.setState({
+      selectable:checked
+    });
+  }
   handleCheckboxShow(e) {
     const checked = e.target.checked;
     this.setState({
@@ -149,7 +162,7 @@ export class TreeView extends Component {
     sourceNode.drop()
     this.setState({ treeData: this.root.model })
   }
-  
+
   onGoUp = () => {
     const [selectedKey] = this.tree.state.selectedKeys
     if(!selectedKey) {
@@ -188,7 +201,7 @@ export class TreeView extends Component {
     return (
       <div style={{ margin: '0 20px' }}>
       <h2>DBPRO</h2>
-      <div>
+      <Row>
       <b>Show lines</b>
         &nbsp;&nbsp;
         <label className="switch"> 
@@ -209,7 +222,26 @@ export class TreeView extends Component {
         <input type="checkbox" checked={this.state.isDraggable} onChange={this.handleDrag}/> 
         <span className="slider "></span>
       </label>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+   
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <b>Selectable</b>
+         &nbsp;&nbsp;
+        <label className="switch">
+          <input type="checkbox" checked={this.state.selectable} onChange={this.handleSelectable} /> 
+          <span className="slider round "></span>
+        </label>
+        
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <b>MultiSelect</b>
+         &nbsp;&nbsp;
+        <label className="switch">
+          <input type="checkbox" checked={this.state.isMultiSelect} onChange={this.handleMultiSelect} /> 
+          <span className="slider round "></span>
+        </label>
+      </Row>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+      <Row>
         <button onClick={this.onAdd}>Add</button>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <button onClick={this.onRemove}>Remove</button>
@@ -217,22 +249,13 @@ export class TreeView extends Component {
         <button onClick={this.onGoUp}>Up</button>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <button onClick={this.onGoDown}>Down</button>
-
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <b>Multi-Select</b>
-         &nbsp;&nbsp;
-        <label className="switch">
-          <input type="checkbox" checked={this.state.isMultiSelect} onChange={this.handleMultiSelect} /> 
-          <span className="slider round "></span>
-        </label>
-      </div>
+        </Row>
       <div className="draggable-container">
         <TreeStyled
           showLine={this.state.showLine}
           checkable={this.state.showCheckbox}
-          selectable={ false }
+          selectable={ this.state.selectable }
           draggable={this.state.isDraggable}
-          // defaultExpandAll
           defaultExpandedKeys={[testData.name]}
           onExpand={this.onExpand}
           onDrop={this.onDrop}
@@ -240,7 +263,7 @@ export class TreeView extends Component {
           defaultCheckedKeys={this.state.defaultCheckedKeys}
           onSelect={this.onSelect}
           onCheck={this.onCheck}
-          multiple={this.isMultiSelect}
+          multiple={this.state.isMultiSelect}
           treeData={[this.state.treeData]}
           onDoubleClick={this.onDoubleClick}
           ref={this.setTreeRef}
