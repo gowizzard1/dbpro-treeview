@@ -7,11 +7,26 @@ import Tree from 'rc-tree';
 import styled from 'styled-components'
 import 'rc-tree/assets/index.css';
 import PropTypes from 'prop-types';
-import ReactDOM from 'react-dom';
 import TreeModel from 'tree-model'
 import { uniqueId, last, defaultTo } from 'lodash'
 import '../styles/basic.less';
-import {Row} from 'reactstrap'
+import {Row,Container} from 'reactstrap'
+
+function filter(array, text) {
+  const getNodes = (result, object) => {
+      if (object.name === text) {
+          result.push(object);
+          return result;
+      }
+      if (Array.isArray(object.nodes)) {
+          const nodes = object.nodes.reduce(getNodes, []);
+          if (nodes.length) result.push({ ...object, nodes });
+      }
+      return result;
+  };
+
+  return array.reduce(getNodes, []);
+}
 
 export class TreeView extends Component {
   static propTypes = {
@@ -53,6 +68,8 @@ export class TreeView extends Component {
       showCheckbox: true,
       isMultiSelect : false,
       selectable: true,
+      eventType: [],
+      searchVal: "rest",
     };
   }
 
@@ -102,6 +119,10 @@ export class TreeView extends Component {
     });
   };
 
+  onCheck = (selectedKeys, info) => {
+    console.log('checked', selectedKeys, info);
+    // this.selKey = info.node.eventKey;
+}
 
   onSelect = (selectedKeys, info) => {
     console.log('selected', selectedKeys, info);
@@ -119,6 +140,7 @@ export class TreeView extends Component {
     this.tree = tree;
   };
   onDoubleClick = (event, node) => {
+    
     console.log('double click')
     const internalTree = this.tree
     internalTree.onNodeExpand(event, node)
@@ -130,20 +152,31 @@ export class TreeView extends Component {
       return
     }
     const node = this.root.first(({ model }) => model.key === selectedKey)
-    const name = `foo${uniqueId()}`
+    const name = `newNode${uniqueId()}`
     node.addChild(new TreeModel().parse({key: name, title: name, children: []}))
     this.setState({ treeData: this.root.model })
   }
+
   onRemove = () => {
-    const [selectedKey] = this.tree.state.selectedKeys
+    const selectedKey = this.tree.state.selectedKeys
     if(!selectedKey) {
       return
     }
-    const node = this.root.first(({ model }) => model.key === selectedKey)
+     var i;
+     for (i = 0; i < selectedKey.length; i++) {
+      console.log(selectedKey[i]);
+    const node = this.root.first(({ model }) => model.key === selectedKey[i])
     this.tree.setState({ selectedKeys: [] })
     node.drop()
     this.setState({ treeData: this.root.model })
+    }
+    
+    // const node = this.root.first(({ model }) => model.key === selectedKey)
+    // this.tree.setState({ selectedKeys: [] })
+    // node.drop()
+    // this.setState({ treeData: this.root.model })
   }
+
   onDrop = ({ node, dragNodesKeys, dropToGap, dropPosition, ...rest }) => {
     const sourceKey = last(dragNodesKeys)
     const { name: destinationKey } = node
@@ -162,7 +195,7 @@ export class TreeView extends Component {
     sourceNode.drop()
     this.setState({ treeData: this.root.model })
   }
-
+  
   onGoUp = () => {
     const [selectedKey] = this.tree.state.selectedKeys
     if(!selectedKey) {
@@ -194,8 +227,35 @@ export class TreeView extends Component {
     setTimeout(() => {
       console.log('current key: ', this.selKey);
     }, 0);
-  };
+  }
 
+  onSearch = () =>{
+    const searchVal = this.state.searchVal
+    const node = this.root.first(({ model }) => model.name === searchVal)
+    this.setState({
+      treeData:node
+    });
+  }
+
+  onDestroy = () =>{
+    //destroy
+    const name = "Root"
+    const node = new TreeModel().parse({key: name, title: name,name:name, children: null})
+    this.root = node
+    this.setState({
+      treeData: this.root.model
+    })
+  }
+
+  OnRefresh = () =>{
+    //refresh
+    this.setState({
+      treeData:this.state.treeData
+    })
+  }
+  OnSort = () =>{
+    // this.treeData.model.
+  }
   
   render() {
     return (
@@ -249,9 +309,15 @@ export class TreeView extends Component {
         <button onClick={this.onGoUp}>Up</button>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <button onClick={this.onGoDown}>Down</button>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <button onClick={this.OnRefresh}>Refresh</button>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <button onClick={this.onDestroy}>Destroy</button>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        {/* <button onClick={this.onSearch}>Asc Sort</button> */}
         </Row>
-      <div className="draggable-container">
-        <TreeStyled
+      {/* <div className="draggable-container"> */}
+        <Tree
           showLine={this.state.showLine}
           checkable={this.state.showCheckbox}
           selectable={ this.state.selectable }
@@ -262,6 +328,7 @@ export class TreeView extends Component {
           defaultSelectedKeys={this.state.defaultSelectedKeys}
           defaultCheckedKeys={this.state.defaultCheckedKeys}
           onSelect={this.onSelect}
+          onRightClick={this.onEdit}
           onCheck={this.onCheck}
           multiple={this.state.isMultiSelect}
           treeData={[this.state.treeData]}
@@ -269,10 +336,15 @@ export class TreeView extends Component {
           ref={this.setTreeRef}
           height={500}
           itemHeight={20}
-          style={{ border: '2px solid #0001' }}
+          style={{ border: '2px solid #0001', width:'600px', height: '500px'}}
         />
+        <div>
+          <Container>
+            {/* <code>Event:{this.state.eventType} fired</code> */}
+          </Container>
+        </div>
       </div>
-      </div>
+     
     );
   }
 }
