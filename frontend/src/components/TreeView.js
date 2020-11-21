@@ -148,7 +148,7 @@ export class TreeView extends Component {
 
   onAdd = () => {
     const [selectedKey] = this.tree.state.selectedKeys
-    if(!selectedKey) {
+    if(selectedKey == undefined) {
       return
     }
     const node = this.root.first(({ model }) => model.key === selectedKey)
@@ -170,11 +170,7 @@ export class TreeView extends Component {
     node.drop()
     this.setState({ treeData: this.root.model })
     }
-    
-    // const node = this.root.first(({ model }) => model.key === selectedKey)
-    // this.tree.setState({ selectedKeys: [] })
-    // node.drop()
-    // this.setState({ treeData: this.root.model })
+  
   }
 
   onDrop = ({ node, dragNodesKeys, dropToGap, dropPosition, ...rest }) => {
