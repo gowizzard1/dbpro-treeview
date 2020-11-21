@@ -124,6 +124,7 @@ export class TreeView extends Component {
     // this.selKey = info.node.eventKey;
 }
 
+
   onSelect = (selectedKeys, info) => {
     console.log('selected', selectedKeys, info);
     this.selKey = info.node.eventKey;
@@ -159,9 +160,10 @@ export class TreeView extends Component {
 
   onRemove = () => {
     const selectedKey = this.tree.state.selectedKeys
-    if(!selectedKey) {
+    if(selectedKey.length < 1 ) {
       return
     }
+    const r = window.confirm("Do you really want to Remove " + selectedKey +"?"); if(r == false){ return }
      var i;
      for (i = 0; i < selectedKey.length; i++) {
       console.log(selectedKey[i]);
@@ -233,7 +235,7 @@ export class TreeView extends Component {
     });
   }
 
-  onDestroy = () =>{
+  onDestroy1 = () =>{
     //destroy
     const name = "Root"
     const node = new TreeModel().parse({key: name, title: name,name:name, children: null})
@@ -249,6 +251,29 @@ export class TreeView extends Component {
       treeData:this.state.treeData
     })
   }
+
+  onDestroy = () =>{
+    const r = window.confirm("Do you really want to Destroy Tree?"); if(r == false){ return }
+    const tree = new TreeModel({ childrenPropertyName: 'childs'})
+    const root = tree.parse(testData)
+    root.walk(function rcTreeModelCompatible(node) {
+      const {
+        name,
+        label: { en },
+        childs,
+      } = node.model
+  
+      node.model.key = name
+      node.model.title = en
+      node.model.children = childs
+      node.model.childs = null
+    })
+    this.root = new TreeModel().parse(root.model);
+    this.setState({
+      treeData:root.model
+    })
+  }
+
   OnSort = () =>{
     // this.treeData.model.
   }
@@ -310,7 +335,7 @@ export class TreeView extends Component {
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <button onClick={this.onDestroy}>Destroy</button>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        {/* <button onClick={this.onSearch}>Asc Sort</button> */}
+        <button onClick={this.onReinstate}>Test</button>
         </Row>
       {/* <div className="draggable-container"> */}
         <Tree
