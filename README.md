@@ -12,7 +12,6 @@ The project is a desktop app compiled with ReactJs and Golang using Wails framew
 * An executable file will be dumped to project/build folder.
 
 # TODO
-- Move some of the tree logic to golang, leaving the fire events functionalities in react
 - Allow edit on toggle button
 - Move the properties (size, colors, icons etc) to UI
 - Add filter logic and UI filter ability
