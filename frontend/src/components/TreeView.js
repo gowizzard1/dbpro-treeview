@@ -129,8 +129,7 @@ export class TreeView extends Component {
   }
   
   onExpand = expandedKeys => {
- 
-    console.log('onExpand', expandedKeys);
+  console.log('onExpand', expandedKeys);
     this.setState({
       expandedKeys,
       autoExpandParent: false,
@@ -205,6 +204,9 @@ export class TreeView extends Component {
   }
 
   onDrop = ({ node, dragNodesKeys, dropToGap, dropPosition, ...rest }) => {
+    this.setState({
+      eventType:"onDrop"
+  });
     const sourceKey = last(dragNodesKeys)
     const { name: destinationKey } = node
     const sourceNode = this.root.first(({ model }) => model.key === sourceKey)
@@ -224,6 +226,9 @@ export class TreeView extends Component {
   }
   
   onGoUp = () => {
+    this.setState({
+      eventType:"onGoUp"
+      });
     const [selectedKey] = this.tree.state.selectedKeys
     if(!selectedKey) {
       return
@@ -237,6 +242,9 @@ export class TreeView extends Component {
     this.setState({ treeData: this.root.model })
   }
   onGoDown = () => {
+    this.setState({
+      eventType:"onGoDown"
+    });
     const [selectedKey] = this.tree.state.selectedKeys
     if(!selectedKey) {
       return
@@ -275,6 +283,9 @@ export class TreeView extends Component {
   }
 
   OnRefresh = () =>{
+    this.setState({
+      eventType:"onRefresh"
+    });
     //refresh
     this.setState({
       treeData:this.state.treeData
@@ -282,6 +293,9 @@ export class TreeView extends Component {
   }
 
   onDestroy = () =>{
+    this.setState({
+      eventType:"onDestroy"
+    });
     const r = window.confirm("Do you really want to Destroy Tree?"); if(r == false){ return }
     const tree = new TreeModel({ childrenPropertyName: 'childs'})
     const root = tree.parse(testData)
