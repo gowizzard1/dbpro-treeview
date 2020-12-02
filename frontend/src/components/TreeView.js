@@ -10,23 +10,8 @@ import PropTypes from 'prop-types';
 import TreeModel from 'tree-model'
 import { uniqueId, last, defaultTo } from 'lodash'
 import '../styles/basic.less';
-import {Row,Container} from 'reactstrap'
-
-function filter(array, text) {
-  const getNodes = (result, object) => {
-      if (object.name === text) {
-          result.push(object);
-          return result;
-      }
-      if (Array.isArray(object.nodes)) {
-          const nodes = object.nodes.reduce(getNodes, []);
-          if (nodes.length) result.push({ ...object, nodes });
-      }
-      return result;
-  };
-
-  return array.reduce(getNodes, []);
-}
+import {Row,Form} from 'reactstrap'
+import { Line, Circle } from 'rc-progress';
 
 export class TreeView extends Component {
   static propTypes = {
@@ -73,6 +58,35 @@ export class TreeView extends Component {
     };
   }
 
+
+  filterTreeNode = (tree, searchKey)=>{
+    let newTree = tree.filter(node => {
+        node.children = this.filterTreeNode(node.children, searchKey)
+        if (node.children.length > 0) {
+            return true
+        }
+        let is_has = this.checkFilterMapping(node, searchKey)
+        return is_has
+    });
+    return newTree
+}
+
+ checkFilterMapping=(originVal, checkVal) =>{
+    let has_name = false;
+    let has_code = false;
+    let has_handler = false;
+    if (originVal.name) {
+        has_name = originVal.name.toLowerCase().indexOf(checkVal.toLowerCase()) > -1
+    }
+    if (originVal.code) {
+        has_code = originVal.code.indexOf(checkVal) > -1
+    }
+    if (originVal.handler) {
+        has_handler = originVal.handler.indexOf(checkVal) > -1
+    }
+    return has_name || has_code || has_handler
+}
+
   handleCheckboxShowLine(e) {
     const checked = e.target.checked;
     this.setState({
@@ -90,12 +104,16 @@ export class TreeView extends Component {
     this.setState({
       isMultiSelect:checked
     });
+    if(!checked){
+      console.log("unselect here")
+    }
   }
   handleSelectable(e) {
     const checked = e.target.checked;
     this.setState({
       selectable:checked
     });
+    console.log(e)
   }
   handleCheckboxShow(e) {
     const checked = e.target.checked;
@@ -282,6 +300,7 @@ export class TreeView extends Component {
     return (
       <div style={{ margin: '0 20px' }}>
       <h2>DBPRO</h2>
+   
       <Row>
       <b>Show lines</b>
         &nbsp;&nbsp;
@@ -337,7 +356,8 @@ export class TreeView extends Component {
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <button onClick={this.onReinstate}>Test</button>
         </Row>
-      {/* <div className="draggable-container"> */}
+      <div className="draggable-container">
+      {/* <Line percent="10" strokeWidth="4" strokeColor="#D3D3D3" /> */}
         <Tree
           showLine={this.state.showLine}
           checkable={this.state.showCheckbox}
@@ -360,9 +380,7 @@ export class TreeView extends Component {
           style={{ border: '2px solid #0001', width:'600px', height: '500px'}}
         />
         <div>
-          <Container>
-            {/* <code>Event:{this.state.eventType} fired</code> */}
-          </Container>
+       </div>
         </div>
       </div>
      
