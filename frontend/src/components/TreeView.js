@@ -7,11 +7,10 @@ import Tree from 'rc-tree';
 import styled from 'styled-components'
 import 'rc-tree/assets/index.css';
 import PropTypes from 'prop-types';
-import TreeModel from 'tree-model'
+import TreeModel,{TreeNode} from 'tree-model'
 import { uniqueId, last, defaultTo } from 'lodash'
 import '../styles/basic.less';
 import {Row,Form} from 'reactstrap'
-import { Line, Circle } from 'rc-progress';
 
 export class TreeView extends Component {
   static propTypes = {
@@ -53,7 +52,7 @@ export class TreeView extends Component {
       showCheckbox: true,
       isMultiSelect : false,
       selectable: true,
-      eventType: [],
+      eventType: "",
       searchVal: "rest",
     };
   }
@@ -130,6 +129,7 @@ export class TreeView extends Component {
   }
   
   onExpand = expandedKeys => {
+ 
     console.log('onExpand', expandedKeys);
     this.setState({
       expandedKeys,
@@ -144,6 +144,9 @@ export class TreeView extends Component {
 
 
   onSelect = (selectedKeys, info) => {
+    this.setState({
+      eventType:"onSelect"
+  });
     console.log('selected', selectedKeys, info);
     this.selKey = info.node.eventKey;
 
@@ -159,13 +162,18 @@ export class TreeView extends Component {
     this.tree = tree;
   };
   onDoubleClick = (event, node) => {
-    
+    this.setState({
+        eventType:"onDoubleClick"
+    });
     console.log('double click')
     const internalTree = this.tree
     internalTree.onNodeExpand(event, node)
   }
 
   onAdd = () => {
+    this.setState({
+      eventType:"onAdd"
+  });
     const [selectedKey] = this.tree.state.selectedKeys
     if(selectedKey == undefined) {
       return
@@ -177,6 +185,9 @@ export class TreeView extends Component {
   }
 
   onRemove = () => {
+    this.setState({
+      eventType:"onRemove"
+  });
     const selectedKey = this.tree.state.selectedKeys
     if(selectedKey.length < 1 ) {
       return
@@ -298,24 +309,23 @@ export class TreeView extends Component {
   
   render() {
     return (
-      <div style={{ margin: '0 20px' }}>
+     <div style={{ margin: '0px 30px', width:'870px'}}>
       <h2>DBPRO</h2>
-   
-      <Row>
+   <Row>
       <b>Show lines</b>
         &nbsp;&nbsp;
         <label className="switch"> 
         <input type="checkbox"  checked={this.state.showLine} onChange={this.handleCheckboxShowLine}/> 
         <span className="slider round"></span>
       </label>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;
       <b>Checkable</b>
       &nbsp;&nbsp;
       <label className="switch">
         <input type="checkbox" checked={this.state.showCheckbox} onChange={this.handleCheckboxShow} /> 
         <span className="slider round"></span>
       </label>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;
       <b> Drag and Drop</b>
       &nbsp;&nbsp;
       <label className="switch">
@@ -356,8 +366,11 @@ export class TreeView extends Component {
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <button onClick={this.onReinstate}>Test</button>
         </Row>
+      
+      <Row>
       <div className="draggable-container">
       {/* <Line percent="10" strokeWidth="4" strokeColor="#D3D3D3" /> */}
+     
         <Tree
           showLine={this.state.showLine}
           checkable={this.state.showCheckbox}
@@ -379,9 +392,15 @@ export class TreeView extends Component {
           itemHeight={20}
           style={{ border: '2px solid #0001', width:'600px', height: '500px'}}
         />
+     
         <div>
        </div>
+       
         </div>
+        </Row>
+        <Row >
+          Event Fired: {this.state.eventType}
+        </Row>
       </div>
      
     );
